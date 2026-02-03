@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example Animations for 3Blue1Brown</title>
+    <style>
+
+              @font-face {
+          font-family: 'CapsRegular';
+          src: url('../fonts/Caps-Regular.ttf') format('truetype');
+          font-weight: normal;
+          font-style: normal;
+        }
+        @font-face {
+          font-family: 'CMU';
+          src: url('../fonts/cmunrm.ttf') format('truetype');
+        }
+       
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'CMU';
+            background: #ffffff;
+            color: #333;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #1a5490;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: flex-start;
+        }
+
+        .image-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 50%;
+            max-width: 600px;
+        }
+
+        .flex-container-ebog,
+        .flex-container-bio,
+        .flex-container-shop {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .flex-container-ebog {
+            margin-top: 0;
+        }
+
+        .flex-container-bio {
+            margin-top: 0;
+        }
+
+        .flex-container-shop {
+            margin-top: 0;
+        }
+
+        .text-box {
+            width: 50%;
+            padding: 30px;
+            border-radius: 8px;
+            font-size: 2.3rem;
+            line-height: 1.6;
+        }
+
+        .bottom-image {
+            width: 100%;
+            max-width: 1200px;
+            margin: 60px auto 40px;
+            text-align: center;
+        }
+
+        .bottom-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .item {
+            width: 100%;
+            height: auto;
+        }
+
+        .item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .image-container,
+            .text-box {
+                width: 100%;
+                max-width: 100%;
+            }
+            
+            .flex-container-ebog,
+            .flex-container-bio,
+            .flex-container-shop {
+                max-width: 100%;
+                margin-top: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+    
+    <div class="content-wrapper">
+    <div class="image-container">
+         <div class="flex-container-ebog">
+          <div>
+          <a href="ebog.html" class="item-link">
+            <div class="item" data-folder="ebog" data-frames="46"><img alt="ebog animation"></div>
+          </a>
+          </div>
+        </div>
+        
+        <div class="flex-container-bio">
+           <div>
+          <a href="bio.html" class="item-link">
+            <div class="item" data-folder="bio" data-frames="56"><img alt="bio animation"></div>
+          </a>
+          </div>
+        </div>
+        
+        <div class="flex-container-shop">
+          <div>
+          <a href="shop.html" class="item-link">
+            <div class="item" data-folder="shop" data-frames="52"><img alt="shop animation"></div>
+          </a>
+          </div>
+        </div>
+    </div>
+
+    <div class="text-box">
+      <h2>About These Animations</h2>
+      <p>
+        Scroll over these animations to see them play through.
+        I drew each frame by hand and then used Java
+        to animate them for this teeny tiny website. I also have some
+        familiarity with DaVinci Resolve.
+      </p>
+
+        <h2>Infographic Below</h2>
+        <p>
+          I drew this simple infographic on the last day of my
+          internship last summer at Freeport-McMoRan. Although it's very gestural
+          and does not fit in with the 3b1b aesthetic, I had a lot of fun making it, and
+          it's a good example of what I can quickly contribute.
+          <br><br>
+          I look forward to hopefully meeting with you and your team if you feel like
+          this could be a good fit.
+        </p>
+
+    </div>
+    </div>
+
+    <div class="bottom-image">
+     
+        <img src="images/bio/spill.jpeg" alt="Additional content">
+    </div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.item').forEach(item => {
+    const frames = parseInt(item.dataset.frames, 10) || 0;
+    const folder = item.dataset.folder || '';
+    const img = item.querySelector('img');
+    if (!img) return;
+
+    // Build frame URLs
+    const urls = Array.from({ length: frames }, (_, i) => 
+      `images/${folder}/${folder}-${i + 1}.webp`
+    );
+
+    // Setup image
+    img.draggable = false;
+    img.style.visibility = 'hidden';
+    
+    // Preload and show first frame
+    const preload = new Image();
+    preload.onload = () => {
+      img.src = urls[0];
+      img.style.visibility = 'visible';
+    };
+    preload.src = urls[0];
+
+    // Animation state
+    let timer = null;
+    let currentFrame = 0;
+    let hasFinished = false;
+
+    const stopAnimation = () => clearInterval(timer);
+    
+    const animate = (direction, fps) => {
+      stopAnimation();
+      timer = setInterval(() => {
+        currentFrame += direction;
+        
+        if (currentFrame >= urls.length - 1) {
+          currentFrame = urls.length - 1;
+          hasFinished = true;
+          stopAnimation();
+        } else if (currentFrame <= 0) {
+          currentFrame = 0;
+          stopAnimation();
+        }
+        
+        img.src = urls[currentFrame];
+      }, 1000 / fps);
+    };
+
+    const handleEnter = () => {
+      if (hasFinished) {
+        currentFrame = 0;
+        hasFinished = false;
+      }
+      animate(1, 10); // Forward at 10 fps
+    };
+
+    const handleLeave = () => {
+      if (!hasFinished) animate(-1, 18); // Backward at 18 fps
+    };
+
+    // Event listeners
+    item.addEventListener('mouseenter', handleEnter);
+    item.addEventListener('mouseleave', handleLeave);
+    item.addEventListener('touchstart', handleEnter, { passive: true });
+    item.addEventListener('touchend', handleLeave, { passive: true });
+  });
+});
+</script>
+
+</body>
+</html>
